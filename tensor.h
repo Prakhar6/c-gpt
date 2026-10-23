@@ -25,7 +25,8 @@ int free_tensor(tensor_t*);
 // Tensor operations
 bool isEmpty(tensor_t*);
 int set_value(tensor_t*, uint64_t, uint64_t, float);
-tensor_t* add_tensors(tensor_t*, tensor_t*);
+tensor_t empty_tensor();
+tensor_t add_tensors(tensor_t*, tensor_t*);
 float multiply_scalar(tensor_t*, float);
 
 #endif

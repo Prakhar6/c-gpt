@@ -64,13 +64,19 @@ int free_tensor(tensor_t* tensor){
     return 0;
 }
 
+tensor_t empty_tensor() {
+    tensor_t newTensor = create_tensor(0 ,0);
+    return newTensor;
+}
+
 // Tensor operations
-bool notEmpty(tensor_t* tensor){
-    if(tensor -> row == 0 || tensor -> col == 0 || tensor -> matrix == NULL){
+bool isEmpty(tensor_t* tensor){
+    if(tensor == NULL || tensor -> row == 0 || tensor -> col == 0 || tensor -> matrix == NULL){
         return true;
     }
     return false;
 }
+
 int set_value(tensor_t* tensor, uint64_t row, uint64_t col, float value){
     if(tensor == NULL || tensor -> matrix == NULL){
         return -1;
@@ -81,20 +87,24 @@ int set_value(tensor_t* tensor, uint64_t row, uint64_t col, float value){
     return 0;
 }
 
-tensor_t* add_tensors(tensor_t* tensor1, tensor_t* tensor2){
-
-    tensor_t newTensor = create_tensor(tensor1 -> row, tensor1 -> col);
+tensor_t add_tensors(tensor_t* tensor1, tensor_t* tensor2){
     
     if(isEmpty(tensor1) || isEmpty(tensor2)){
-        return NULL;
+        return empty_tensor();
     }
 
     if(tensor1 -> row != tensor2 -> row || tensor1 -> col != tensor2 -> col){
-        return NULL;
+        return empty_tensor();
+    }
+
+    tensor_t newTensor = create_tensor(tensor1 -> row, tensor1 -> col);
+
+    if(newTensor.matrix == NULL){
+        return newTensor;
     }
 
     float* ptr1 = tensor1 -> matrix;
-    float* ptr2 = tensor1 -> matrix;
+    float* ptr2 = tensor2 -> matrix;
     float* ptr3 = newTensor.matrix;
 
     for(uint64_t i = 0; i < tensor1 -> row; i++){
@@ -106,7 +116,7 @@ tensor_t* add_tensors(tensor_t* tensor1, tensor_t* tensor2){
         }
     }
 
-    return &newTensor;
+    return newTensor;
     
 }
 
