@@ -120,6 +120,26 @@ tensor_t add_tensors(tensor_t* tensor1, tensor_t* tensor2){
     
 }
 
-float multiply_scalar(tensor_t*, float);
+tensor_t multiply_scalar(tensor_t* tensor, float scalar){
+    if(isEmpty(tensor)){
+        return empty_tensor();
+    }
+
+    tensor_t newTensor = create_tensor(tensor -> row, tensor -> col);
+
+    if(newTensor.matrix == NULL){
+        return newTensor;
+    }
+
+    float* ptr = newTensor.matrix;
+
+    for(uint64_t i = 0; i < tensor -> row; i++){
+        for(uint64_t j = 0; j < tensor -> col; j++){
+            *ptr *= scalar;
+            ptr += 1;
+        }
+    }
+
+}
 
 
