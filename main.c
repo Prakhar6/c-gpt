@@ -1,6 +1,4 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include "tensor.c"
+#include "tensor.h"
 
 
 int main(void){
@@ -16,7 +14,7 @@ int main(void){
         printf("\n");
     }
 
-    printf("%d", &newTensor);
+    printf("%p", (void*)&newTensor);
 
     free_tensor(&newTensor);
     return 0;

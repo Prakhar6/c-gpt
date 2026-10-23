@@ -1,5 +1,3 @@
-#include <stdio.h>
-#include <stdlib.h>
 #include "tensor.h"
 
 
@@ -7,6 +5,13 @@
 tensor_t create_tensor(uint64_t row, uint64_t col) {
 
     tensor_t newTensor;
+
+    if(row == 0 || col == 0 || row > (SIZE_MAX / sizeof(float)) / col){
+        newTensor.row = 0;
+        newTensor.col = 0;
+        newTensor.matrix = NULL;
+        return newTensor;
+    }
 
     newTensor.row = row;
     newTensor.col = col;
@@ -22,8 +27,8 @@ tensor_t create_tensor(uint64_t row, uint64_t col) {
     }
 
     float *curr = matrix;
-    for(int i = 0; i < row; i++){
-        for(int j = 0; j < col; j++){
+    for(uint64_t i = 0; i < row; i++){
+        for(uint64_t j = 0; j < col; j++){
             *curr = 0.0f;
             curr++;
         }
@@ -46,7 +51,7 @@ float get_value(tensor_t* tensor, uint64_t row, uint64_t col){
 // Destroy tensor
 int free_tensor(tensor_t* tensor){
 
-    if(tensor -> matrix == NULL){
+    if(tensor == NULL){
         return -1;
     }
 
@@ -58,5 +63,53 @@ int free_tensor(tensor_t* tensor){
 
     return 0;
 }
+
+// Tensor operations
+bool notEmpty(tensor_t* tensor){
+    if(tensor -> row == 0 || tensor -> col == 0 || tensor -> matrix == NULL){
+        return true;
+    }
+    return false;
+}
+int set_value(tensor_t* tensor, uint64_t row, uint64_t col, float value){
+    if(tensor == NULL || tensor -> matrix == NULL){
+        return -1;
+    }
+
+    tensor -> matrix[row * tensor -> col + col] = value;
+
+    return 0;
+}
+
+tensor_t* add_tensors(tensor_t* tensor1, tensor_t* tensor2){
+
+    tensor_t newTensor = create_tensor(tensor1 -> row, tensor1 -> col);
+    
+    if(isEmpty(tensor1) || isEmpty(tensor2)){
+        return NULL;
+    }
+
+    if(tensor1 -> row != tensor2 -> row || tensor1 -> col != tensor2 -> col){
+        return NULL;
+    }
+
+    float* ptr1 = tensor1 -> matrix;
+    float* ptr2 = tensor1 -> matrix;
+    float* ptr3 = newTensor.matrix;
+
+    for(uint64_t i = 0; i < tensor1 -> row; i++){
+        for(uint64_t j = 0; j < tensor1 -> col; j++){
+            *ptr3 = *ptr1 + *ptr2;
+            ptr1 += 1;
+            ptr2 += 1;
+            ptr3 += 1;
+        }
+    }
+
+    return &newTensor;
+    
+}
+
+float multiply_scalar(tensor_t*, float);
 
 
