@@ -31,6 +31,7 @@ int set_value(tensor_t*, uint64_t, uint64_t, float);
 
 tensor_t add_tensors(tensor_t*, tensor_t*);
 tensor_t multiply_scalar(tensor_t*, float);
-tensor_t transpose_tensor(tensor_t*);
+tensor_t simple_transpose(tensor_t*);
+tensor_t blocked_transpose(tensor_t*, uint64_t);
 
 #endif

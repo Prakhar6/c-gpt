@@ -1,4 +1,5 @@
 #include "tensor.h"
+#include <stdlib.h>
 
 
 // Initialize a tensor of 0s
@@ -131,18 +132,23 @@ tensor_t multiply_scalar(tensor_t* tensor, float scalar){
         return newTensor;
     }
 
-    float* ptr = newTensor.matrix;
+    float* ptr1 = tensor -> matrix;
+    float* ptr2 = newTensor.matrix;
 
     for(uint64_t i = 0; i < tensor -> row; i++){
         for(uint64_t j = 0; j < tensor -> col; j++){
-            *ptr *= scalar;
-            ptr += 1;
+            *ptr1 *= scalar;
+            *ptr2 = *ptr1;
+            ptr1 += 1;
+            ptr2 += 1;
         }
     }
 
+    return newTensor;
+
 }
 
-tensor_t transpose_tensor(tensor_t* tensor){
+tensor_t simple_transpose(tensor_t* tensor){
     if(isEmpty(tensor)){
         return empty_tensor();
     }
@@ -154,16 +160,47 @@ tensor_t transpose_tensor(tensor_t* tensor){
     }
 
     float* ptr1 = tensor -> matrix;
-    float* ptr2 = newTensor.matrix;
 
     for(uint64_t i = 0; i < tensor -> row; i++){
-        ptr2 = newTensor.matrix;
-        for(u_int64_t j = 0; j < tensor -> col; j++){
+        for(uint64_t j = 0; j < tensor -> col; j++){
             newTensor.matrix[j * tensor -> row + i] = *ptr1;
             ptr1 += 1;
         }
     }
 
+    return newTensor;
+
+}
+tensor_t blocked_transpose(tensor_t* tensor, uint64_t block_size){
+    if(isEmpty(tensor)){
+        return empty_tensor(); 
+    }
+
+    tensor_t newTensor = create_tensor(tensor -> col, tensor -> row);
+
+    if(newTensor.matrix == NULL){
+        return empty_tensor();
+    }
+
+    float* ptr = newTensor.matrix;
+
+    for(uint64_t i = 0; i < tensor -> row; i += block_size){
+        for(uint64_t j = 0; j < tensor -> col; j += block_size){
+
+            for(uint64_t x = 0; x < block_size; x++){
+                for(uint64_t y = 0; y < block_size; y++){
+
+                    if((x + i) < tensor -> row && (y + j) < tensor -> col){
+                        float value = tensor -> matrix[(x + i) * tensor -> col + (y + j)];
+                        ptr[(y + j) * tensor -> row + (x + i)] = value;
+                    }
+                }
+            }
+        }
+
+    }
+    
+    return newTensor;
 }
 
 
