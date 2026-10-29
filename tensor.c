@@ -137,8 +137,8 @@ tensor_t multiply_scalar(tensor_t* tensor, float scalar){
 
     for(uint64_t i = 0; i < tensor -> row; i++){
         for(uint64_t j = 0; j < tensor -> col; j++){
-            *ptr1 *= scalar;
-            *ptr2 = *ptr1;
+            float value = *ptr1 * scalar;
+            *ptr2 = value;
             ptr1 += 1;
             ptr2 += 1;
         }
@@ -172,7 +172,7 @@ tensor_t simple_transpose(tensor_t* tensor){
 
 }
 tensor_t blocked_transpose(tensor_t* tensor, uint64_t block_size){
-    if(isEmpty(tensor)){
+    if(isEmpty(tensor) || block_size == 0){
         return empty_tensor(); 
     }
 
@@ -187,8 +187,11 @@ tensor_t blocked_transpose(tensor_t* tensor, uint64_t block_size){
     for(uint64_t i = 0; i < tensor -> row; i += block_size){
         for(uint64_t j = 0; j < tensor -> col; j += block_size){
 
-            for(uint64_t x = 0; x < block_size; x++){
-                for(uint64_t y = 0; y < block_size; y++){
+            uint64_t rowNum = (block_size > tensor -> row - i) ? tensor -> row - i : block_size;
+            uint64_t colNum = (block_size > tensor -> col - j) ? tensor -> col - j : block_size;
+
+            for(uint64_t x = 0; x < rowNum; x++){
+                for(uint64_t y = 0; y < colNum; y++){
 
                     if((x + i) < tensor -> row && (y + j) < tensor -> col){
                         float value = tensor -> matrix[(x + i) * tensor -> col + (y + j)];
